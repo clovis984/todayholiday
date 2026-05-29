@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="Today Holiday – Dein KI-Reiseplaner. Beschreib deinen Traumurlaub in einem Satz und wir finden die besten Angebote für Flüge, Hotels und Aktivitäten."/>
+  <meta name="keywords" content="Urlaub planen, KI Reiseplaner, günstige Flüge buchen, Hotels vergleichen, Reisen 2026"/>
+  <meta property="og:title" content="Today Holiday – KI-Reiseplaner"/>
+  <meta property="og:description" content="Dein Traumurlaub in einem Satz. KI findet echte Angebote."/>
+  <meta property="og:url" content="https://today-holiday.com"/>
+  <title>Today Holiday – KI-Reiseplaner</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Fraunces:ital,wght@0,700;0,900;1,700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:       #080E1A;
+      --bg2:      #0D1628;
+      --blue:     #2563EB;
+      --blue2:    #60A5FA;
+      --gold:     #F59E0B;
+      --gold2:    #FCD34D;
+      --green:    #10B981;
+      --white:    #FFFFFF;
+      --gray:     #94A3B8;
+      --gray2:    #64748B;
+      --card:     rgba(255,255,255,0.04);
+      --border:   rgba(255,255,255,0.07);
+      --radius:   20px;
+    }
+
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--bg);
+      color: var(--white);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* ── Hintergrund ── */
+    .bg-glow {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 10% 10%, rgba(37,99,235,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 40% at 90% 90%, rgba(245,158,11,0.08) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 40% at 50% 50%, rgba(16,185,129,0.04) 0%, transparent 70%);
+    }
+
+    /* ── Navigation ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 48px;
+      background: rgba(8,14,26,0.8);
+      backdrop-filter: blur(24px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .logo-icon {
+      width: 38px; height: 38px;
+      background: linear-gradient(135deg, var(--blue), var(--gold));
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+    }
+
+    .logo-text {
+      font-family: 'Fraunces', serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--white);
+    }
+
+    .logo-text span { color: var(--gold); }
+
+    .nav-center {
+      display: flex;
+      gap: 36px;
+      list-style: none;
+    }
+
+    .nav-center a {
+      color: var(--gray);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .nav-center a:hover { color: var(--white); }
+
+    .nav-right { display: flex; gap: 12px; align-items: center; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 22px;
+      border-radius: 50px;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+      border: none;
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--white);
+    }
+
+    .btn-outline:hover { border-color: rgba(255,255,255,0.2); background: var(--card); }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--blue), #1D4ED8);
+      color: white;
+      box-shadow: 0 4px 20px rgba(37,99,235,0.35);
+    }
+
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 28px rgba(37,99,235,0.45); }
+
+    .btn-gold {
+      background: linear-gradient(135deg, var(--gold), #D97706);
+      color: white;
+      box-shadow: 0 4px 20px rgba(245,158,11,0.35);
+    }
+
+    .btn-gold:hover { transform: translateY(-1px); box-shadow: 0 6px 28px rgba(245,158,11,0.45); }
+
+    /* ── Hero ── */
+    .hero {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 130px 24px 80px;
+    }
+
+    .hero-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(245,158,11,0.1);
+      border: 1px solid rgba(245,158,11,0.25);
+      border-radius: 50px;
+      padding: 8px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--gold2);
+      margin-bottom: 32px;
+      animation: rise 0.7s ease both;
+    }
+
+    .hero h1 {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(48px, 8vw, 96px);
+      font-weight: 900;
+      line-height: 1.05;
+      margin-bottom: 24px;
+      animation: rise 0.7s 0.1s ease both;
+      max-width: 900px;
+    }
+
+    .hero h1 em {
+      font-style: italic;
+      background: linear-gradient(135deg, var(--gold), var(--gold2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-sub {
+      font-size: clamp(16px, 2vw, 20px);
+      color: var(--gray);
+      max-width: 560px;
+      margin: 0 auto 48px;
+      animation: rise 0.7s 0.2s ease both;
+      font-weight: 400;
+    }
+
+    /* ── KI Suchfeld ── */
+    .search-container {
+      width: 100%;
+      max-width: 740px;
+      margin: 0 auto 48px;
+      animation: rise 0.7s 0.3s ease both;
+    }
+
+    .search-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 24px;
+      padding: 8px 8px 8px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: border-color 0.3s;
+    }
+
+    .search-card:focus-within {
+      border-color: rgba(37,99,235,0.5);
+      box-shadow: 0 0 0 4px rgba(37,99,235,0.1);
+    }
+
+    .search-card input {
+      flex: 1;
+      background: none;
+      border: none;
+      outline: none;
+      font-size: 16px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      color: var(--white);
+      padding: 8px 0;
+    }
+
+    .search-card input::placeholder { color: var(--gray2); }
+
+    .search-card .btn-gold {
+      padding: 14px 28px;
+      font-size: 15px;
+      white-space: nowrap;
+      border-radius: 16px;
+    }
+
+    .quick-tags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 16px;
+    }
+
+    .quick-tag {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      padding: 7px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--gray);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .quick-tag:hover {
+      background: rgba(37,99,235,0.12);
+      border-color: rgba(37,99,235,0.3);
+      color: var(--white);
+    }
+
+    /* ── KI Ergebnis ── */
+    .ai-result {
+      display: none;
+      margin-top: 20px;
+      background: rgba(37,99,235,0.08);
+      border: 1px solid rgba(37,99,235,0.2);
+      border-radius: 20px;
+      padding: 24px;
+      text-align: left;
+    }
+
+    .ai-result.show { display: block; animation: rise 0.4s ease; }
+
+    .ai-result-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .ai-avatar {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, var(--blue), var(--blue2));
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .ai-result-title { font-size: 15px; font-weight: 600; }
+    .ai-result-sub { font-size: 13px; color: var(--gray); }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+    }
+
+    .res-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      text-decoration: none;
+      color: var(--white);
+      transition: all 0.2s;
+      display: block;
+    }
+
+    .res-card:hover {
+      background: rgba(255,255,255,0.09);
+      transform: translateY(-3px);
+      border-color: rgba(245,158,11,0.3);
+    }
+
+    .res-emoji { font-size: 28px; margin-bottom: 8px; }
+    .res-name { font-size: 15px; font-weight: 700; }
+    .res-total { font-size: 14px; color: var(--gold2); font-weight: 600; margin-top: 4px; }
+    .res-breakdown { font-size: 12px; color: var(--gray); margin-top: 3px; }
+
+    .booking-btns {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+
+    .book-btn {
+      flex: 1;
+      min-width: 120px;
+      padding: 11px 16px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      text-align: center;
+      text-decoration: none;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .book-btn.flight { background: rgba(37,99,235,0.15); color: var(--blue2); border: 1px solid rgba(37,99,235,0.25); }
+    .book-btn.hotel  { background: rgba(16,185,129,0.12); color: #6EE7B7; border: 1px solid rgba(16,185,129,0.2); }
+    .book-btn.tour   { background: rgba(245,158,11,0.12); color: var(--gold2); border: 1px solid rgba(245,158,11,0.2); }
+
+    .book-btn:hover { transform: translateY(-1px); opacity: 0.9; }
+
+    /* ── Hero Stats ── */
+    .hero-stats {
+      display: flex;
+      gap: 48px;
+      flex-wrap: wrap;
+      justify-content: center;
+      animation: rise 0.7s 0.4s ease both;
+    }
+
+    .hero-stat { text-align: center; }
+
+    .hero-stat-num {
+      font-family: 'Fraunces', serif;
+      font-size: 36px;
+      font-weight: 900;
+      color: var(--white);
+    }
+
+    .hero-stat-num span { color: var(--gold); }
+    .hero-stat-label { font-size: 13px; color: var(--gray); margin-top: 2px; }
+
+    /* ── Section gemeinsam ── */
+    .section {
+      position: relative;
+      z-index: 1;
+      padding: 110px 48px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-eyebrow {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 14px;
+    }
+
+    .section-h {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(36px, 5vw, 58px);
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: 18px;
+    }
+
+    .section-p {
+      font-size: 17px;
+      color: var(--gray);
+      max-width: 520px;
+      line-height: 1.75;
+      margin-bottom: 60px;
+    }
+
+    /* ── Wie es funktioniert ── */
+    .how-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+    }
+
+    .how-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 36px 32px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s;
+    }
+
+    .how-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--blue), var(--gold));
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .how-card:hover { transform: translateY(-6px); border-color: rgba(255,255,255,0.12); }
+    .how-card:hover::before { opacity: 1; }
+
+    .how-num {
+      font-family: 'Fraunces', serif;
+      font-size: 56px;
+      font-weight: 900;
+      color: rgba(255,255,255,0.06);
+      position: absolute;
+      top: 16px; right: 24px;
+      line-height: 1;
+    }
+
+    .how-icon {
+      width: 52px; height: 52px;
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+
+    .how-icon.blue  { background: rgba(37,99,235,0.15); }
+    .how-icon.gold  { background: rgba(245,158,11,0.15); }
+    .how-icon.green { background: rgba(16,185,129,0.15); }
+
+    .how-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .how-text { font-size: 15px; color: var(--gray); line-height: 1.65; }
+
+    /* ── Ziele ── */
+    .dest-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    @media (max-width: 900px) { .dest-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 500px) { .dest-grid { grid-template-columns: 1fr; } }
+
+    .dest-card {
+      border-radius: 20px;
+      overflow: hidden;
+      position: relative;
+      height: 280px;
+      text-decoration: none;
+      display: block;
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+
+    .dest-card:hover { transform: scale(1.03); }
+
+    .dest-card:first-child {
+      grid-row: span 2;
+      height: 100%;
+    }
+
+    .dest-bg {
+      position: absolute;
+      inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 80px;
+      transition: transform 0.4s;
+    }
+
+    .dest-card:hover .dest-bg { transform: scale(1.08); }
+
+    .dest-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.8) 35%, rgba(0,0,0,0.1) 70%, transparent);
+    }
+
+    .dest-info {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 22px;
+    }
+
+    .dest-country {
+      font-size: 12px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.6);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 4px;
+    }
+
+    .dest-name {
+      font-family: 'Fraunces', serif;
+      font-size: 26px;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 6px;
+    }
+
+    .dest-price-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(245,158,11,0.9);
+      border-radius: 50px;
+      padding: 4px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      color: white;
+    }
+
+    /* ── Buchungs-Partner ── */
+    .partner-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+    }
+
+    .partner-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      text-decoration: none;
+      color: var(--white);
+      transition: all 0.25s;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .partner-card:hover {
+      background: rgba(255,255,255,0.07);
+      border-color: rgba(255,255,255,0.12);
+      transform: translateY(-4px);
+    }
+
+    .partner-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .partner-emoji-wrap {
+      width: 52px; height: 52px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.06);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 26px;
+    }
+
+    .partner-badge {
+      font-size: 12px;
+      font-weight: 700;
+      background: rgba(16,185,129,0.15);
+      color: #6EE7B7;
+      border: 1px solid rgba(16,185,129,0.2);
+      border-radius: 50px;
+      padding: 4px 12px;
+    }
+
+    .partner-name { font-size: 18px; font-weight: 700; }
+    .partner-desc { font-size: 14px; color: var(--gray); line-height: 1.5; }
+
+    .partner-arrow {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--blue2);
+      margin-top: auto;
+    }
+
+    /* ── App Section ── */
+    .app-section {
+      background: linear-gradient(135deg, rgba(37,99,235,0.12), rgba(245,158,11,0.08));
+      border: 1px solid var(--border);
+      border-radius: 32px;
+      padding: 72px 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 48px;
+      flex-wrap: wrap;
+    }
+
+    .app-left { max-width: 520px; }
+
+    .app-left h2 {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(36px, 5vw, 52px);
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: 16px;
+    }
+
+    .app-left h2 em {
+      font-style: italic;
+      color: var(--gold);
+    }
+
+    .app-left p {
+      font-size: 16px;
+      color: var(--gray);
+      line-height: 1.7;
+      margin-bottom: 32px;
+    }
+
+    .app-btns { display: flex; gap: 14px; flex-wrap: wrap; }
+
+    .store-btn {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px 22px;
+      text-decoration: none;
+      color: var(--white);
+      transition: all 0.2s;
+    }
+
+    .store-btn:hover {
+      background: rgba(255,255,255,0.11);
+      transform: translateY(-2px);
+    }
+
+    .store-icon { font-size: 28px; }
+    .store-info { line-height: 1.35; }
+    .store-label { font-size: 11px; color: var(--gray); }
+    .store-name  { font-size: 16px; font-weight: 700; }
+
+    .app-right { font-size: 140px; line-height: 1; filter: drop-shadow(0 20px 40px rgba(245,158,11,0.2)); }
+
+    /* ── Trust Badges ── */
+    .trust-row {
+      display: flex;
+      gap: 32px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 0;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      color: var(--gray);
+    }
+
+    .trust-item span { font-size: 20px; }
+
+    /* ── Footer ── */
+    .footer {
+      position: relative;
+      z-index: 1;
+      padding: 56px 48px 32px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .footer-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 40px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+    }
+
+    .footer-brand p {
+      font-size: 14px;
+      color: var(--gray);
+      max-width: 280px;
+      margin-top: 12px;
+      line-height: 1.6;
+    }
+
+    .footer-col h4 {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--gray2);
+      margin-bottom: 16px;
+    }
+
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+
+    .footer-col a {
+      font-size: 14px;
+      color: var(--gray);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-col a:hover { color: var(--white); }
+
+    .footer-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 28px;
+      border-top: 1px solid var(--border);
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .footer-copy { font-size: 13px; color: var(--gray2); }
+
+    .footer-disclaimer {
+      font-size: 12px;
+      color: var(--gray2);
+      max-width: 500px;
+      text-align: right;
+    }
+
+    /* ── Animationen ── */
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Mobile ── */
+    @media (max-width: 768px) {
+      nav { padding: 16px 20px; }
+      .nav-center { display: none; }
+      .section { padding: 70px 20px; }
+      .app-section { padding: 40px 28px; }
+      .footer { padding: 40px 20px 24px; }
+      .app-right { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-glow"></div>
+
+  <!-- Navigation -->
+  <nav>
+    <a href="/" class="logo">
+      <div class="logo-icon">✈</div>
+      <span class="logo-text">Today<span>Holiday</span></span>
+    </a>
+    <ul class="nav-center">
+      <li><a href="#how">Wie es funktioniert</a></li>
+      <li><a href="#destinations">Reiseziele</a></li>
+      <li><a href="#partners">Partner</a></li>
+      <li><a href="#app">App</a></li>
+    </ul>
+    <div class="nav-right">
+      <a href="#destinations" class="btn btn-outline">Entdecken</a>
+      <a href="#search" class="btn btn-gold">Jetzt planen ✈</a>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <div class="hero" id="search">
+    <div class="hero-chip">🤖 KI-gestützter Reiseplaner · Echte Preise · Direkte Buchung</div>
+
+    <h1>Dein <em>Traumurlaub</em><br/>in einem Satz.</h1>
+
+    <p class="hero-sub">Beschreib einfach was du willst – Today Holiday findet echte Flüge, Hotels und Touren. Alles in Sekunden, direkt buchbar.</p>
+
+    <!-- KI Suchfeld -->
+    <div class="search-container">
+      <div class="search-card">
+        <span style="font-size:20px;">✈️</span>
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="z.B. Strand Mallorca Juli 1.500€ ab Frankfurt…"
+        />
+        <button class="btn btn-gold" onclick="handleSearch()">Suchen →</button>
+      </div>
+      <div class="quick-tags">
+        <span class="quick-tag" onclick="setSearch('🏖 Strand Mallorca unter 1.000 €')">🏖 Strand unter 1.000 €</span>
+        <span class="quick-tag" onclick="setSearch('🏙 Städtetrip Barcelona Wochenende')">🏙 Städtetrip</span>
+        <span class="quick-tag" onclick="setSearch('👨‍👩‍👧 Familienurlaub Kreta Juli')">👨‍👩‍👧 Familienurlaub</span>
+        <span class="quick-tag" onclick="setSearch('💑 Romantik Paris 3 Nächte')">💑 Romantik-Trip</span>
+        <span class="quick-tag" onclick="setSearch('⛰ Berge Österreich günstig')">⛰ Berge</span>
+      </div>
+
+      <!-- KI Antwort -->
+      <div class="ai-result" id="aiResult">
+        <div class="ai-result-header">
+          <div class="ai-avatar">🤖</div>
+          <div>
+            <div class="ai-result-title" id="aiTitle">Ich habe die besten Angebote für dich gefunden:</div>
+            <div class="ai-result-sub">Echte Preise · Direkt buchbar</div>
+          </div>
+        </div>
+        <div class="result-grid" id="resultGrid"></div>
+        <div class="booking-btns" id="bookingBtns"></div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hero-stat-num">250<span>k+</span></div>
+        <div class="hero-stat-label">Hotels weltweit</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">500<span>+</span></div>
+        <div class="hero-stat-label">Airlines</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">40<span>%</span></div>
+        <div class="hero-stat-label">Ø Ersparnis</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">10<span>s</span></div>
+        <div class="hero-stat-label">Bis zum Plan</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Trust -->
+  <div class="section" style="padding-top:0; padding-bottom:0;">
+    <div class="trust-row">
+      <div class="trust-item"><span>🔒</span> SSL-gesichert</div>
+      <div class="trust-item"><span>💳</span> Keine Extrakosten</div>
+      <div class="trust-item"><span>🌍</span> Weltweit buchbar</div>
+      <div class="trust-item"><span>⚡</span> Sofortige Ergebnisse</div>
+      <div class="trust-item"><span>🤖</span> KI-gestützt</div>
+      <div class="trust-item"><span>📱</span> App verfügbar</div>
+    </div>
+  </div>
+
+  <!-- Wie es funktioniert -->
+  <section class="section" id="how">
+    <div class="section-eyebrow">So einfach geht's</div>
+    <h2 class="section-h">3 Schritte zum<br/>Traumurlaub</h2>
+    <p class="section-p">Kein stundenlanger Vergleich. Keine Überforderung. Unsere KI macht die Arbeit.</p>
+
+    <div class="how-grid">
+      <div class="how-card">
+        <div class="how-num">01</div>
+        <div class="how-icon blue">💬</div>
+        <div class="how-title">Wunsch beschreiben</div>
+        <p class="how-text">Schreib in normaler Sprache was du dir vorstellst – Ziel, Budget, Datum, wieviele Personen. Alles erlaubt, keine Formulare.</p>
+      </div>
+      <div class="how-card">
+        <div class="how-num">02</div>
+        <div class="how-icon gold">🤖</div>
+        <div class="how-title">KI findet Angebote</div>
+        <p class="how-text">Unsere KI durchsucht in Sekunden hunderte Flug- und Hoteloptionen und stellt dir die besten Kombis für dein Budget zusammen.</p>
+      </div>
+      <div class="how-card">
+        <div class="how-num">03</div>
+        <div class="how-icon green">✅</div>
+        <div class="how-title">Direkt buchen</div>
+        <p class="how-text">Ein Klick – du landest direkt auf der Buchungsseite mit vorausgefüllten Daten. Fertig gebucht in unter einer Minute.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Reiseziele -->
+  <section class="section" id="destinations">
+    <div class="section-eyebrow">Beliebte Ziele</div>
+    <h2 class="section-h">Wohin geht<br/>die Reise?</h2>
+    <p class="section-p">Die meistgebuchten Reiseziele unserer Nutzer – jetzt entdecken.</p>
+
+    <div class="dest-grid">
+      <a href="redirect.html?dest=mallorca&type=hotel" class="dest-card">
+        <div class="dest-bg" style="background:linear-gradient(135deg,#0EA5E9,#1B3A6B)">🏖</div>
+        <div class="dest-overlay"></div>
+        <div class="dest-info">
+          <div class="dest-country">Spanien</div>
+          <div class="dest-name">Mallorca</div>
+          <span class="dest-price-tag">✈ ab 680 €</span>
+        </div>
+      </a>
+      <a href="redirect.html?dest=lissabon&type=hotel" class="dest-card">
+        <div class="dest-bg" style="background:linear-gradient(135deg,#F59E0B,#DC2626)">🇵🇹</div>
+        <div class="dest-overlay"></div>
+        <div class="dest-info">
+          <div class="dest-country">Portugal</div>
+          <div class="dest-name">Lissabon</div>
+          <span class="dest-price-tag">✈ ab 340 €</span>
+        </div>
+      </a>
+      <a href="redirect.html?dest=kreta&type=hotel" class="dest-card">
+        <div class="dest-bg" style="background:linear-gradient(135deg,#10B981,#065F46)">🇬🇷</div>
+        <div class="dest-overlay"></div>
+        <div class="dest-info">
+          <div class="dest-country">Griechenland</div>
+          <div class="dest-name">Kreta</div>
+          <span class="dest-price-tag">✈ ab 590 €</span>
+        </div>
+      </a>
+      <a href="redirect.html?dest=barcelona&type=hotel" class="dest-card">
+        <div class="dest-bg" style="background:linear-gradient(135deg,#8B5CF6,#4C1D95)">🏙</div>
+        <div class="dest-overlay"></div>
+        <div class="dest-info">
+          <div class="dest-country">Spanien</div>
+          <div class="dest-name">Barcelona</div>
+          <span class="dest-price-tag">✈ ab 420 €</span>
+        </div>
+      </a>
+      <a href="redirect.html?dest=dubai&type=hotel" class="dest-card">
+        <div class="dest-bg" style="background:linear-gradient(135deg,#F97316,#EA580C)">🌆</div>
+        <div class="dest-overlay"></div>
+        <div class="dest-info">
+          <div class="dest-country">VAE</div>
+          <div class="dest-name">Dubai</div>
+          <span class="dest-price-tag">✈ ab 890 €</span>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- Buchungs-Partner -->
+  <section class="section" id="partners">
+    <div class="section-eyebrow">Unsere Partner</div>
+    <h2 class="section-h">Die besten<br/>Buchungsplattformen</h2>
+    <p class="section-p">Wir arbeiten mit führenden Reiseplattformen zusammen – für die besten Preise weltweit.</p>
+
+    <div class="partner-grid">
+      <a href="redirect.html?partner=flights" class="partner-card">
+        <div class="partner-top">
+          <div class="partner-emoji-wrap">✈️</div>
+          <span class="partner-badge">Sofort verfügbar</span>
+        </div>
+        <div class="partner-name">Flüge vergleichen</div>
+        <div class="partner-desc">500+ Airlines weltweit – finde den günstigsten Flug für dein Reiseziel.</div>
+        <div class="partner-arrow"><span>Jetzt Flüge suchen</span><span>→</span></div>
+      </a>
+      <a href="redirect.html?partner=hotels" class="partner-card">
+        <div class="partner-top">
+          <div class="partner-emoji-wrap">🏨</div>
+          <span class="partner-badge">250k+ Hotels</span>
+        </div>
+        <div class="partner-name">Hotels buchen</div>
+        <div class="partner-desc">Von Budget bis Luxus – alle Hotels mit echten Bewertungen und besten Preisen.</div>
+        <div class="partner-arrow"><span>Jetzt Hotels suchen</span><span>→</span></div>
+      </a>
+      <a href="redirect.html?partner=tours" class="partner-card">
+        <div class="partner-top">
+          <div class="partner-emoji-wrap">🎭</div>
+          <span class="partner-badge">Weltweit</span>
+        </div>
+        <div class="partner-name">Touren & Aktivitäten</div>
+        <div class="partner-desc">Geführte Touren, Eintrittskarten und einzigartige Erlebnisse vor Ort buchen.</div>
+        <div class="partner-arrow"><span>Jetzt Touren suchen</span><span>→</span></div>
+      </a>
+      <a href="redirect.html?partner=transfer" class="partner-card">
+        <div class="partner-top">
+          <div class="partner-emoji-wrap">🚗</div>
+          <span class="partner-badge">24/7 verfügbar</span>
+        </div>
+        <div class="partner-name">Transfer & Mietwagen</div>
+        <div class="partner-desc">Vom Flughafen direkt zum Hotel – entspannt ankommen ohne Stress.</div>
+        <div class="partner-arrow"><span>Jetzt Transfer buchen</span><span>→</span></div>
+      </a>
+    </div>
+  </section>
+
+  <!-- App Section -->
+  <section class="section" id="app">
+    <div class="app-section">
+      <div class="app-left">
+        <div class="section-eyebrow">Mobile App</div>
+        <h2>Plane von<br/><em>überall.</em></h2>
+        <p>Die Today Holiday App bringt KI-Reiseplanung direkt aufs Handy. Beschreib deinen Traumurlaub unterwegs – wir buchen für dich.</p>
+        <div class="app-btns">
+          <a href="#" class="store-btn">
+            <span class="store-icon">🍎</span>
+            <div class="store-info">
+              <div class="store-label">Bald im</div>
+              <div class="store-name">App Store</div>
+            </div>
+          </a>
+          <a href="#" class="store-btn">
+            <span class="store-icon">🤖</span>
+            <div class="store-info">
+              <div class="store-label">Bald bei</div>
+              <div class="store-name">Google Play</div>
+            </div>
+          </a>
+        </div>
+      </div>
+      <div class="app-right">✈️</div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="/" class="logo">
+          <div class="logo-icon">✈</div>
+          <span class="logo-text">Today<span>Holiday</span></span>
+        </a>
+        <p>KI-gestützter Reiseplaner für smarte Reisende. Finde deinen Traumurlaub in Sekunden.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Buchen</h4>
+        <ul>
+          <li><a href="redirect.html?partner=flights">Flüge</a></li>
+          <li><a href="redirect.html?partner=hotels">Hotels</a></li>
+          <li><a href="redirect.html?partner=tours">Touren</a></li>
+          <li><a href="redirect.html?partner=transfer">Transfer</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Ziele</h4>
+        <ul>
+          <li><a href="redirect.html?dest=mallorca&type=hotel">Mallorca</a></li>
+          <li><a href="redirect.html?dest=barcelona&type=hotel">Barcelona</a></li>
+          <li><a href="redirect.html?dest=kreta&type=hotel">Kreta</a></li>
+          <li><a href="redirect.html?dest=dubai&type=hotel">Dubai</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Rechtliches</h4>
+        <ul>
+          <li><a href="#">Impressum</a></li>
+          <li><a href="#">Datenschutz</a></li>
+          <li><a href="#">AGB</a></li>
+          <li><a href="#">Kontakt</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2026 Today Holiday. Alle Rechte vorbehalten.</div>
+      <div class="footer-disclaimer">* Preise sind Schätzungen und können variieren. Today Holiday erhält eine Provision bei Buchungen über unsere Links – für dich entstehen keine Mehrkosten.</div>
+    </div>
+  </footer>
+
+  <script>
+    // ── AFFILIATE LINKS ──
+    // Trage hier deine echten Travelpayouts Links ein!
+    const LINKS = {
+      flights:  "https://jetradar.de",
+      hotels:   "https://trip.com",
+      tours:    "https://tiqets.com/de",
+      transfer: "https://gettransfer.com/de",
+      mallorca:   "https://www.booking.com/searchresults.de.html?ss=Mallorca",
+      lissabon:   "https://www.booking.com/searchresults.de.html?ss=Lissabon",
+      kreta:      "https://www.booking.com/searchresults.de.html?ss=Kreta",
+      barcelona:  "https://www.booking.com/searchresults.de.html?ss=Barcelona",
+      dubai:      "https://www.booking.com/searchresults.de.html?ss=Dubai",
+    };
+
+    // ── Reiseziele ──
+    const ZIELE = {
+      mallorca:  { emoji:"🏖", name:"Mallorca",  land:"Spanien",    flug:148, hotel:490, tour:55 },
+      lissabon:  { emoji:"🇵🇹", name:"Lissabon",  land:"Portugal",   flug:89,  hotel:220, tour:40 },
+      kreta:     { emoji:"🇬🇷", name:"Kreta",     land:"Griechenland", flug:120, hotel:420, tour:65 },
+      barcelona: { emoji:"🏙", name:"Barcelona", land:"Spanien",    flug:99,  hotel:280, tour:45 },
+      rom:       { emoji:"🇮🇹", name:"Rom",       land:"Italien",    flug:89,  hotel:260, tour:50 },
+      dubai:     { emoji:"🌆", name:"Dubai",     land:"VAE",        flug:340, hotel:420, tour:80 },
+      paris:     { emoji:"🗼", name:"Paris",     land:"Frankreich", flug:79,  hotel:300, tour:60 },
+      amsterdam: { emoji:"🌷", name:"Amsterdam", land:"Niederlande", flug:79,  hotel:200, tour:35 },
+    };
+
+    function setSearch(text) {
+      document.getElementById('searchInput').value = text;
+      handleSearch();
+    }
+
+    function handleSearch() {
+      const input = document.getElementById('searchInput').value.toLowerCase().trim();
+      if (!input) return;
+
+      // Ziel erkennen
+      let gefunden = [];
+      for (const [key, z] of Object.entries(ZIELE)) {
+        if (input.includes(key) || input.includes(z.name.toLowerCase()) || input.includes(z.land.toLowerCase())) {
+          gefunden.push({ key, ...z });
+        }
+      }
+
+      // Budget erkennen
+      const budgetMatch = input.match(/(\d[\d.]+)/);
+      const budget = budgetMatch ? parseInt(budgetMatch[1].replace('.','')) : 1500;
+
+      // Wenn kein Ziel – nach Budget filtern
+      if (gefunden.length === 0) {
+        gefunden = Object.entries(ZIELE)
+          .filter(([k, z]) => (z.flug + z.hotel + z.tour) <= budget)
+          .map(([k, z]) => ({ key: k, ...z }))
+          .slice(0, 4);
+
+        if (gefunden.length === 0) {
+          gefunden = Object.entries(ZIELE).slice(0, 3).map(([k, z]) => ({ key: k, ...z }));
+        }
+
+        document.getElementById('aiTitle').textContent = `✨ Top Empfehlungen für dein Budget von ${budget} €:`;
+      } else {
+        document.getElementById('aiTitle').textContent = `✨ Perfekte Angebote für ${gefunden[0].name}:`;
+      }
+
+      // Ergebnisse anzeigen
+      const grid = document.getElementById('resultGrid');
+      grid.innerHTML = gefunden.map(z => `
+        <a href="redirect.html?dest=${z.key}&type=hotel" class="res-card">
+          <div class="res-emoji">${z.emoji}</div>
+          <div class="res-name">${z.name}</div>
+          <div class="res-total">ab ${z.flug + z.hotel + z.tour} € gesamt</div>
+          <div class="res-breakdown">✈ ${z.flug}€ · 🏨 ${z.hotel}€ · 🎭 ${z.tour}€</div>
+        </a>
+      `).join('');
+
+      // Buchungs-Buttons
+      const dest = gefunden[0]?.key || 'mallorca';
+      document.getElementById('bookingBtns').innerHTML = `
+        <a href="redirect.html?partner=flights" class="book-btn flight">✈️ Flug suchen</a>
+        <a href="redirect.html?dest=${dest}&type=hotel" class="book-btn hotel">🏨 Hotel buchen</a>
+        <a href="redirect.html?partner=tours" class="book-btn tour">🎭 Touren entdecken</a>
+      `;
+
+      document.getElementById('aiResult').classList.add('show');
+      document.getElementById('aiResult').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    document.getElementById('searchInput').addEventListener('keydown', e => {
+      if (e.key === 'Enter') handleSearch();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Today Holiday – Bestes Angebot wird gesucht…</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+      background: #080E1A;
+      color: white;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    .wrap { padding: 48px 24px; max-width: 400px; }
+    .logo {
+      font-size: 56px;
+      margin-bottom: 24px;
+      animation: pulse 1.5s ease infinite;
+    }
+    @keyframes pulse {
+      0%,100% { transform: scale(1); }
+      50%      { transform: scale(1.08); }
+    }
+    h1 { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+    p  { color: #94A3B8; font-size: 15px; margin-bottom: 32px; }
+    .spinner {
+      width: 44px; height: 44px;
+      border: 3px solid rgba(255,255,255,0.08);
+      border-top-color: #2563EB;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      margin: 0 auto 28px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .manual-btn {
+      display: inline-block;
+      background: linear-gradient(135deg, #F59E0B, #D97706);
+      color: white;
+      text-decoration: none;
+      padding: 14px 32px;
+      border-radius: 14px;
+      font-weight: 700;
+      font-size: 15px;
+      box-shadow: 0 4px 20px rgba(245,158,11,0.3);
+      transition: opacity 0.2s;
+    }
+    .manual-btn:hover { opacity: 0.88; }
+    .back {
+      display: block;
+      margin-top: 16px;
+      color: #64748B;
+      font-size: 13px;
+      text-decoration: none;
+    }
+    .back:hover { color: white; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="logo">✈️</div>
+    <div class="spinner"></div>
+    <h1>Bestes Angebot wird gesucht…</h1>
+    <p>Du wirst in Kürze weitergeleitet.</p>
+    <a id="manualLink" href="#" class="manual-btn">Hier klicken falls keine Weiterleitung</a>
+    <a href="index.html" class="back">← Zurück zu Today Holiday</a>
+  </div>
+
+  <script>
+    // ══════════════════════════════════════════════
+    // HIER DEINE TRAVELPAYOUTS AFFILIATE-LINKS EINTRAGEN
+    // Ersetze die URLs mit deinen echten generierten Links!
+    // ══════════════════════════════════════════════
+    const AFFILIATE = {
+      // Flüge – Jetradar/Aviasales Affiliate-Link
+      flights: "https://jetradar.de",
+
+      // Hotels – Trip.com oder RateHawk Affiliate-Link
+      hotels:  "https://trip.com",
+
+      // Touren – Tiqets Affiliate-Link
+      tours:   "https://tiqets.com/de",
+
+      // Transfer – GetTransfer Affiliate-Link
+      transfer: "https://gettransfer.com/de",
+
+      // Hotels nach Ziel (Booking.com Links wenn genehmigt)
+      dest: {
+        mallorca:   "https://www.booking.com/searchresults.de.html?ss=Mallorca",
+        lissabon:   "https://www.booking.com/searchresults.de.html?ss=Lissabon",
+        kreta:      "https://www.booking.com/searchresults.de.html?ss=Kreta",
+        barcelona:  "https://www.booking.com/searchresults.de.html?ss=Barcelona",
+        dubai:      "https://www.booking.com/searchresults.de.html?ss=Dubai",
+        paris:      "https://www.booking.com/searchresults.de.html?ss=Paris",
+        rom:        "https://www.booking.com/searchresults.de.html?ss=Rom",
+        amsterdam:  "https://www.booking.com/searchresults.de.html?ss=Amsterdam",
+      }
+    };
+
+    // URL-Parameter lesen
+    const p       = new URLSearchParams(window.location.search);
+    const dest    = p.get('dest')    || '';
+    const type    = p.get('type')    || '';
+    const partner = p.get('partner') || '';
+
+    // Ziel-URL bestimmen
+    let zielUrl = AFFILIATE.hotels; // Default
+
+    if (partner === 'flights')  zielUrl = AFFILIATE.flights;
+    if (partner === 'hotels')   zielUrl = AFFILIATE.hotels;
+    if (partner === 'tours')    zielUrl = AFFILIATE.tours;
+    if (partner === 'transfer') zielUrl = AFFILIATE.transfer;
+
+    if (type === 'hotel' && dest) {
+      zielUrl = AFFILIATE.dest[dest] || AFFILIATE.hotels;
+    }
+    if (type === 'flight') zielUrl = AFFILIATE.flights;
+    if (type === 'tour')   zielUrl = AFFILIATE.tours;
+
+    // Link setzen & weiterleiten
+    document.getElementById('manualLink').href = zielUrl;
+    setTimeout(() => { window.location.href = zielUrl; }, 1500);
+  </script>
+</body>
+</html>
