@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Today Holiday – Bestes Angebot wird gesucht…</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'DM Sans',sans-serif;background:#FFF8F0;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;}
+    .card{background:white;border-radius:24px;padding:48px 40px;max-width:400px;width:100%;box-shadow:0 8px 40px rgba(0,0,0,0.1);}
+    .logo{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:#1A1A2E;margin-bottom:32px;}
+    .logo span{color:#FF6B35;}
+    .icon{font-size:56px;margin-bottom:20px;animation:pulse 1.5s ease infinite;}
+    @keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.08);}}
+    .spinner-wrap{margin:0 auto 24px;width:48px;height:48px;}
+    .spinner{width:48px;height:48px;border:3px solid #F3F4F6;border-top-color:#FF6B35;border-radius:50%;animation:spin 0.7s linear infinite;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+    h1{font-size:20px;font-weight:700;color:#1A1A2E;margin-bottom:8px;}
+    p{font-size:14px;color:#6B7280;margin-bottom:28px;line-height:1.6;}
+    .btn{display:inline-block;background:linear-gradient(135deg,#FF6B35,#FF8C5A);color:white;text-decoration:none;padding:14px 32px;border-radius:14px;font-weight:700;font-size:15px;box-shadow:0 4px 16px rgba(255,107,53,0.3);transition:opacity 0.2s;width:100%;}
+    .btn:hover{opacity:0.88;}
+    .back{display:block;margin-top:14px;color:#9CA3AF;font-size:13px;text-decoration:none;transition:color 0.2s;}
+    .back:hover{color:#1A1A2E;}
+    .dest-info{background:#FFF8F0;border-radius:12px;padding:12px 16px;margin-bottom:20px;font-size:13px;color:#6B7280;line-height:1.5;}
+    .dest-info strong{color:#1A1A2E;}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">Today<span>Holiday</span></div>
+    <div class="icon">✈️</div>
+    <div class="spinner-wrap"><div class="spinner"></div></div>
+    <h1>Bestes Angebot wird gesucht…</h1>
+    <p id="destInfo">Du wirst gleich zum günstigsten Angebot weitergeleitet.</p>
+    <a id="manualBtn" href="#" class="btn">Hier klicken falls keine Weiterleitung</a>
+    <a href="index.html" class="back">← Zurück zu Today Holiday</a>
+  </div>
+
+  <script>
+    // ══════════════════════════════════════════════════════════
+    // AFFILIATE LINKS – alle Plattformen
+    // Travelpayouts Drive trackt automatisch – Links können
+    // normale URLs bleiben, Drive fügt deine ID hinzu!
+    // ══════════════════════════════════════════════════════════
+    const AFFILIATE = {
+      // ── FLÜGE ──
+      flights:   "https://jetradar.de",         // Primär
+      flights2:  "https://www.momondo.de",       // Backup
+      flights3:  "https://www.kayak.de",         // Backup 2
+
+      // ── HOTELS ──
+      hotels:    "https://www.booking.com",      // Primär
+      hotels2:   "https://www.agoda.com/de-de",  // Backup
+      hotels3:   "https://de.trip.com",          // Backup 2
+
+      // ── MIETWAGEN ──
+      car:       "https://www.rentalcars.com",
+      car2:      "https://www.billiger-mietwagen.de",
+
+      // ── SONSTIGES ──
+      tours:     "https://www.getyourguide.de",
+      tours2:    "https://tiqets.com/de",
+      transfer:  "https://gettransfer.com/de",
+
+      // ── HOTELS NACH ZIEL (Booking.com mit Datum) ──
+      dest: {
+        mallorca:    "https://www.booking.com/searchresults.de.html?ss=Mallorca&lang=de",
+        teneriffa:   "https://www.booking.com/searchresults.de.html?ss=Teneriffa&lang=de",
+        lissabon:    "https://www.booking.com/searchresults.de.html?ss=Lissabon&lang=de",
+        kreta:       "https://www.booking.com/searchresults.de.html?ss=Kreta&lang=de",
+        barcelona:   "https://www.booking.com/searchresults.de.html?ss=Barcelona&lang=de",
+        teneriffa:   "https://www.booking.com/searchresults.de.html?ss=Teneriffa&lang=de",
+        dubai:       "https://www.booking.com/searchresults.de.html?ss=Dubai&lang=de",
+        paris:       "https://www.booking.com/searchresults.de.html?ss=Paris&lang=de",
+        rom:         "https://www.booking.com/searchresults.de.html?ss=Rom&lang=de",
+        amsterdam:   "https://www.booking.com/searchresults.de.html?ss=Amsterdam&lang=de",
+        madrid:      "https://www.booking.com/searchresults.de.html?ss=Madrid&lang=de",
+        athen:       "https://www.booking.com/searchresults.de.html?ss=Athen&lang=de",
+        london:      "https://www.booking.com/searchresults.de.html?ss=London&lang=de",
+        antalya:     "https://www.booking.com/searchresults.de.html?ss=Antalya&lang=de",
+        istanbul:    "https://www.booking.com/searchresults.de.html?ss=Istanbul&lang=de",
+        hurghada:    "https://www.booking.com/searchresults.de.html?ss=Hurghada&lang=de",
+        santorini:   "https://www.booking.com/searchresults.de.html?ss=Santorini&lang=de",
+        marrakesch:  "https://www.booking.com/searchresults.de.html?ss=Marrakesch&lang=de",
+        phuket:      "https://www.booking.com/searchresults.de.html?ss=Phuket&lang=de",
+      }
+    };
+
+    // URL Parameter lesen
+    const p        = new URLSearchParams(window.location.search);
+    const dest     = (p.get('dest')    || '').toLowerCase();
+    const type     = (p.get('type')    || '').toLowerCase();
+    const partner  = (p.get('partner') || '').toLowerCase();
+    const checkin  = p.get('checkin')  || '';
+    const checkout = p.get('checkout') || '';
+    const persons  = p.get('persons')  || '1';
+
+    let zielUrl = AFFILIATE.hotels;
+    let beschreibung = 'Weiterleitung zum günstigsten Angebot…';
+
+    if(partner === 'flights'){
+      zielUrl = AFFILIATE.flights;
+      beschreibung = '✈️ Günstigste Flüge werden gesucht…';
+    } else if(partner === 'hotels'){
+      zielUrl = AFFILIATE.hotels;
+      beschreibung = '🏨 Günstigste Hotels werden gesucht…';
+    } else if(partner === 'car'){
+      zielUrl = AFFILIATE.car;
+      beschreibung = '🚗 Günstigste Mietwagen werden gesucht…';
+    } else if(partner === 'tours'){
+      zielUrl = AFFILIATE.tours;
+      beschreibung = '🎭 Touren & Aktivitäten werden gesucht…';
+    } else if(partner === 'transfer'){
+      zielUrl = AFFILIATE.transfer;
+      beschreibung = '🚐 Günstigste Transfers werden gesucht…';
+    } else if(type === 'hotel' && dest){
+      const base = AFFILIATE.dest[dest] || `https://www.booking.com/searchresults.de.html?ss=${encodeURIComponent(dest)}&lang=de`;
+      zielUrl = checkin && checkout
+        ? `${base}&checkin=${checkin}&checkout=${checkout}&group_adults=${persons}&group_children=0`
+        : `${base}&group_adults=${persons}`;
+      const destName = dest.charAt(0).toUpperCase() + dest.slice(1);
+      beschreibung = `🏨 Hotels in <strong>${destName}</strong> ${checkin ? `· ${checkin.split('-').reverse().join('.')}` : ''} werden gesucht…`;
+    } else if(type === 'flight'){
+      zielUrl = AFFILIATE.flights;
+      beschreibung = '✈️ Günstigster Flug wird gesucht…';
+    } else if(type === 'car'){
+      zielUrl = AFFILIATE.car;
+      beschreibung = '🚗 Mietwagen wird gesucht…';
+    } else if(type === 'tour'){
+      zielUrl = AFFILIATE.tours;
+      beschreibung = '🎭 Touren werden gesucht…';
+    }
+
+    document.getElementById('destInfo').innerHTML = beschreibung;
+    document.getElementById('manualBtn').href = zielUrl;
+
+    // Weiterleiten nach 1.5 Sekunden
+    setTimeout(() => { window.location.href = zielUrl; }, 1500);
+  </script>
+</body>
+</html>
