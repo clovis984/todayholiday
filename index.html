@@ -196,8 +196,6 @@
       .hero-stats{gap:20px;}
     }
 
-
-
     /* AI STATUS BAR */
     .ai-status-bar{background:linear-gradient(135deg,#EFF6FF,#F0FDF4);border:1px solid #BFDBFE;border-radius:12px;padding:10px 16px;margin:0 0 12px;display:flex;align-items:center;gap:8px;font-size:13px;color:#1D4ED8;display:none;}
     .ai-status-bar.show{display:flex;}
@@ -222,7 +220,6 @@
     <div class="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></div>
   </nav>
 
-  <!-- HERO -->
   <section class="hero">
     <div class="hero-inner">
       <div class="hero-badge">🤖 KI-Reiseplaner</div>
@@ -231,7 +228,6 @@
 
       <p class="hero-sub">Sag uns dein Ziel und Budget. Wir finden die günstigsten Flüge, Hotels und Mietwagen.</p>
 
-      <!-- CHAT INTERFACE -->
       <div class="chat-card">
         <div class="chat-header">
           <div class="chat-header-avatar">✈️</div>
@@ -269,7 +265,6 @@
         </div>
       </div>
 
-      <!-- BEISPIEL-PROMPTS -->
       <div class="example-prompts">
         <span class="eprompt" onclick="setPrompt('Wochenendtrip ab Frankfurt, 300€, irgendwohin in Europa')">🍻 Wochenende</span>
         <span class="eprompt" onclick="setPrompt('Günstigster Strandurlaub, max 250€, egal wohin')">💸 Young &amp; Broke</span>
@@ -294,7 +289,6 @@
     <div class="trust-item"><span>🤖</span> KI-gestützt</div>
   </div>
 
-  <!-- WIE ES FUNKTIONIERT -->
   <section class="section" id="how">
     <div class="eyebrow">So einfach geht's</div>
     <h2 class="section-h">Dein Urlaub in<br/>3 Schritten</h2>
@@ -321,7 +315,6 @@
     </div>
   </section>
 
-  <!-- REISEZIELE -->
   <div style="background:var(--sand);padding:80px 0;">
     <section class="section" id="destinations" style="padding-top:0;padding-bottom:0;">
       <div class="eyebrow">Beliebte Ziele</div>
@@ -402,7 +395,6 @@
     </section>
   </div>
 
-  <!-- APP -->
   <section class="section" id="app">
     <div style="background:linear-gradient(135deg,var(--sand) 0%,#E8F4FF 100%);border:1.5px solid var(--border);border-radius:28px;padding:56px 48px;display:flex;align-items:center;justify-content:space-between;gap:40px;flex-wrap:wrap;">
       <div style="max-width:480px;">
@@ -424,7 +416,6 @@
     </div>
   </section>
 
-  <!-- FOOTER -->
   <footer class="footer">
     <div class="footer-inner">
       <div class="footer-top">
@@ -1043,9 +1034,9 @@
       }));
 
       try {
-        // gemini-1.5-flash: stabil & zuverlässig
+        // gemini-1.5-flash: Absolut stabil und aktuell für Web-Apps
         const res = await fetch(
-          'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' + GEMINI_KEY,
+          'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=' + GEMINI_KEY,
           {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -1083,7 +1074,12 @@
             const result = JSON.parse(aiText);
             if (result.action === 'search') {
               chatHistory.push({ role: 'model', content: 'Ergebnisse werden angezeigt.' });
-              showResults(result);
+              try {
+                showResults(result);
+              } catch (uiErr) {
+                console.error('Fehler bei der Hotel/Flug-Anzeige:', uiErr);
+                addMessage('Fehler beim Laden der UI-Elemente. Bitte lade die Seite neu. 🔄', 'ai');
+              }
               return;
             }
           } catch (e) { console.warn('JSON parse fehler:', e); }
@@ -1216,7 +1212,11 @@
           const bkgUrl = (checkin && checkout)
             ? 'https://www.booking.com/searchresults.de.html?ss=' + enc(destination) + '&checkin=' + checkin + '&checkout=' + checkout + '&group_adults=' + (persons || 1) + '&group_children=' + (children || 0) + '&no_rooms=1&lang=de'
             : 'https://www.booking.com/searchresults.de.html?ss=' + enc(destination) + '&lang=de';
-          const stars = '⭐'.repeat(Math.min(h.stars || 3, 5));
+          
+          // NEUER FIX: Verhindert den JS Crash bei Strings als Sternen-Anzahl
+          const hotelStars = parseInt(h.stars) || 3;
+          const stars = '⭐'.repeat(Math.max(0, Math.min(hotelStars, 5)));
+          
           const totalPrice = h.total || Math.round((h.price_per_night || 80) * (nights || 7));
           const priceHtml = '<div style="text-align:right;flex-shrink:0;"><div style="font-size:16px;font-weight:900;color:#FF6B35;">' + totalPrice + ' €</div><div style="font-size:10px;color:#9CA3AF;">' + (nights || 7) + ' Nächte</div></div>';
           wrap.appendChild(resultCard(bkgUrl, '', '#F0FDF4', '#16A34A', '#F0FDF4', '🏨',
