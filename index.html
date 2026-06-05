@@ -991,78 +991,63 @@
       sendBtn.disabled = false;
     }
 
-    // ── GEMINI API AUFRUFEN ──
+ // ── NUR TAVILY & LOKALE LOGIK AUFRUFEN ──
     async function callGemini() {
       const statusBar = document.getElementById('aiStatusBar');
       const typingId  = addTyping();
+      const lastUserMsg = chatHistory.filter(m => m.role === 'user').pop()?.content || '';
 
-      // Tavily Suche wenn Gespräch weit genug ist
-      let tavilyContext = '';
-      if (chatHistory.length >= 2) {
-        statusBar.classList.add('show');
-        document.getElementById('aiStatusText').textContent = '🔍 Suche aktuelle Preise…';
-        try {
-          const lastUserMsg = chatHistory.filter(m => m.role === 'user').pop()?.content || '';
-          const tres = await fetch('https://api.tavily.com/search', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              api_key: TAVILY_KEY,
-              query: lastUserMsg + ' günstigster Flug Hotel 2026',
-              search_depth: 'basic',
-              max_results: 4,
-              include_answer: true
-            })
-          });
-          if (tres.ok) {
-            const td = await tres.json();
-            if (td.answer) tavilyContext += td.answer + '\n';
-            (td.results || []).slice(0, 3).forEach(r => {
-              tavilyContext += r.title + ': ' + r.content + '\n';
-            });
-          }
-        } catch (e) { console.warn('Tavily:', e.message); }
-        statusBar.classList.remove('show');
+      // 1. SCHRITT: Deine EIGENE Logik analysiert den Text nach Zielen und Daten
+      const tripData = analyzeTrip(lastUserMsg);
+
+      // Wenn kein Ziel erkannt wurde, fragt der Bot nach
+      if (!tripData.destName && !tripData.destCode) {
+         removeTyping(typingId);
+         addMessage("Wohin möchtest du genau reisen? Nenne mir bitte ein Ziel (z.B. Mallorca oder Paris).", "ai");
+         return;
       }
 
-      // Nachrichten für Gemini aufbauen
-      const messages = chatHistory.map(m => ({
-        role: m.role === 'user' ? 'user' : 'model',
-        parts: [{ text: tavilyContext && m === chatHistory[chatHistory.length - 1]
-          ? m.content + '\n\n[Suchergebnisse:\n' + tavilyContext + ']'
-          : m.content }]
-      }));
-
+      // 2. SCHRITT: Tavily holt echte Infos aus dem Netz
+      statusBar.classList.add('show');
+      document.getElementById('aiStatusText').textContent = '🔍 Suche aktuelle Angebote im Netz…';
+      
+      let aiAnswer = `Ich habe tolle Angebote für ${tripData.destName || 'dein Ziel'} gefunden!`;
+      
       try {
-        // gemini-1.5-flash: Absolut stabil und aktuell für Web-Apps
-        const res = await fetch(
-          'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=' + GEMINI_KEY,
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              system_instruction: { parts: [{ text: GEMINI_SYSTEM }] },
-              contents: messages,
-              generationConfig: { maxOutputTokens: 1200, temperature: 0.2 }
-            })
+        const tres = await fetch('https://api.tavily.com/search', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            api_key: TAVILY_KEY,
+            query: `Urlaub ${lastUserMsg} beste angebote tipps`,
+            search_depth: 'basic',
+            include_answer: true 
+          })
+        });
+        
+        if (tres.ok) {
+          const td = await tres.json();
+          if (td.answer) {
+             aiAnswer = td.answer;
           }
-        );
-
-        removeTyping(typingId);
-
-        if (!res.ok) {
-          const errJson = await res.json().catch(() => ({}));
-          console.error('Gemini Error:', res.status, errJson);
-          if (res.status === 400) {
-            chatHistory = [];
-            addMessage('Es gab ein Problem mit der KI. Bitte starte eine neue Anfrage! 🔄', 'ai');
-          } else if (res.status === 429) {
-            addMessage('Zu viele Anfragen. Bitte warte kurz und versuche es nochmal ⏱️', 'ai');
-          } else {
-            addMessage('Verbindungsproblem. Bitte versuche es nochmal! 🔄', 'ai');
-          }
-          return;
         }
+      } catch (e) {
+        console.warn('Tavily-Fehler:', e.message);
+      }
+      
+      statusBar.classList.remove('show');
+      removeTyping(typingId);
+
+      // 3. SCHRITT: Antwort ausgeben
+      chatHistory.push({ role: 'model', content: aiAnswer });
+      addMessage(aiAnswer, 'ai');
+
+      // 4. SCHRITT: Deine eigenen Buchungskarten anzeigen!
+      const links = buildLinks(tripData);
+      if (links.length > 0) {
+         addResultCards(links, tripData);
+      }
+    }
 
         const data = await res.json();
         let aiText = (data?.candidates?.[0]?.content?.parts?.[0]?.text || '').trim();
