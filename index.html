@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="Today Holiday – Die besten Budget-Reisedeals, jeden Tag neu. Günstige Flüge, Hotels und Komplettreisen zum Sparpreis."/>
+  <title>Today Holiday – Die besten Budget-Reisedeals täglich</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,700;0,900;1,700&display=swap" rel="stylesheet">
+
+  <!-- Travelpayouts Drive – automatisches Affiliate-Tracking -->
+  <script nowprocket data-noptimize="1" data-cfasync="false" data-wpfc-render="false" seraph-accel-crit="1" data-no-defer="1">
+    (function () {
+        var script = document.createElement("script");
+        script.async = 1;
+        script.src = 'https://tp-em.com/NTM2Mjc4.js?t=536278';
+        document.head.appendChild(script);
+    })();
+  </script>
+
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    :root{
+      --sun:#FF6B35;--sun2:#FF8C5A;--sky:#0099CC;
+      --sand:#FFF8F0;--sand2:#FFF0E0;--dark:#1A1A2E;
+      --gray:#6B7280;--lgray:#F3F4F6;--white:#FFFFFF;
+      --border:#E5E7EB;--shadow:0 4px 24px rgba(0,0,0,0.08);
+      --green:#16A34A;--green-bg:#F0FDF4;
+    }
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+    html{scroll-behavior:smooth;}
+    body{font-family:'DM Sans',sans-serif;background:var(--white);color:var(--dark);overflow-x:hidden;}
+
+    nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between;}
+    .logo{display:flex;align-items:center;gap:8px;text-decoration:none;}
+    .logo-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--sun),var(--sky));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;}
+    .logo-text{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--dark);}
+    .logo-text span{color:var(--sun);}
+    .nav-links{display:flex;gap:28px;list-style:none;align-items:center;}
+    .nav-links a{color:var(--gray);text-decoration:none;font-size:14px;font-weight:500;transition:color 0.2s;}
+    .nav-links a:hover{color:var(--dark);}
+    .nav-cta{background:var(--sun);color:white!important;padding:9px 20px;border-radius:25px;font-weight:600!important;}
+    .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px;}
+    .hamburger span{width:22px;height:2px;background:var(--dark);border-radius:2px;}
+
+    .hero{background:linear-gradient(160deg,var(--sand) 0%,#FFF5EC 50%,#E8F4FF 100%);padding:120px 24px 50px;text-align:center;position:relative;overflow:hidden;}
+    .hero::before{content:'';position:absolute;top:-100px;right:-100px;width:500px;height:500px;background:radial-gradient(circle,rgba(255,107,53,0.08) 0%,transparent 70%);pointer-events:none;}
+    .hero-inner{position:relative;z-index:1;max-width:780px;margin:0 auto;}
+    .hero-badge{display:inline-flex;align-items:center;gap:8px;background:white;border:1px solid var(--border);border-radius:25px;padding:8px 18px;font-size:13px;font-weight:600;color:var(--sun);margin-bottom:24px;box-shadow:0 2px 12px rgba(0,0,0,0.06);}
+    .hero h1{font-family:'Playfair Display',serif;font-size:clamp(34px,6vw,60px);font-weight:900;line-height:1.1;color:var(--dark);margin-bottom:16px;}
+    .hero h1 em{font-style:italic;color:var(--sun);}
+    .hero-sub{font-size:clamp(15px,2vw,18px);color:var(--gray);max-width:540px;margin:0 auto 28px;line-height:1.6;}
+    .hero-stats{display:flex;gap:40px;flex-wrap:wrap;justify-content:center;}
+    .hstat{text-align:center;}
+    .hstat-num{font-family:'Playfair Display',serif;font-size:28px;font-weight:900;color:var(--dark);}
+    .hstat-num span{color:var(--sun);}
+    .hstat-label{font-size:13px;color:var(--gray);margin-top:2px;}
+
+    .filter-bar{position:sticky;top:64px;z-index:90;background:white;border-bottom:1px solid var(--border);padding:14px 0;}
+    .filter-scroll{display:flex;gap:10px;overflow-x:auto;padding:0 24px;max-width:1280px;margin:0 auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+    .filter-scroll::-webkit-scrollbar{display:none;}
+    .filter-chip{background:white;border:1.5px solid var(--border);border-radius:25px;padding:9px 18px;font-size:14px;font-weight:600;color:var(--gray);cursor:pointer;white-space:nowrap;transition:all 0.2s;flex-shrink:0;}
+    .filter-chip:hover{border-color:var(--sun);color:var(--sun);}
+    .filter-chip.active{background:var(--sun);border-color:var(--sun);color:white;}
+
+    .deals-section{max-width:1280px;margin:0 auto;padding:32px 24px 80px;}
+    .deals-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;}
+    .deals-title{font-family:'Playfair Display',serif;font-size:26px;font-weight:900;}
+    .deals-right{display:flex;align-items:center;gap:14px;}
+    .deals-count{font-size:14px;color:var(--gray);}
+    .filter-toggle-btn{display:inline-flex;align-items:center;gap:7px;background:white;border:1.5px solid var(--border);border-radius:12px;padding:9px 16px;font-size:14px;font-weight:600;color:var(--dark);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;}
+    .filter-toggle-btn:hover{border-color:var(--sun);color:var(--sun);}
+
+    /* FILTER PANEL */
+    .filter-panel{background:var(--lgray);border-radius:18px;padding:20px 24px;margin-bottom:24px;display:none;}
+    .filter-panel.show{display:block;}
+    .filter-row{display:flex;gap:20px;flex-wrap:wrap;align-items:flex-end;}
+    .filter-group{display:flex;flex-direction:column;gap:6px;min-width:150px;flex:1;}
+    .filter-group label{font-size:12px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:0.05em;}
+    .filter-group select,.filter-group input{border:1.5px solid var(--border);border-radius:10px;padding:10px 14px;font-size:14px;font-family:'DM Sans',sans-serif;outline:none;background:white;}
+    .filter-group select:focus,.filter-group input:focus{border-color:var(--sun);}
+    .filter-actions{display:flex;gap:10px;}
+    .filter-apply{background:var(--sun);color:white;border:none;border-radius:10px;padding:10px 20px;font-size:14px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;}
+    .filter-reset{background:white;color:var(--gray);border:1.5px solid var(--border);border-radius:10px;padding:10px 20px;font-size:14px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;}
+
+    .deals-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;}
+
+    .deal-card{background:white;border:1.5px solid var(--border);border-radius:20px;overflow:hidden;transition:all 0.25s;cursor:pointer;display:flex;flex-direction:column;}
+    .deal-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,0,0,0.12);border-color:var(--sun);}
+    .deal-img-wrap{position:relative;height:180px;overflow:hidden;}
+    .deal-img{width:100%;height:100%;object-fit:cover;transition:transform 0.4s;}
+    .deal-card:hover .deal-img{transform:scale(1.06);}
+    .deal-discount{position:absolute;top:12px;left:12px;background:var(--sun);color:white;font-size:13px;font-weight:800;padding:5px 12px;border-radius:20px;box-shadow:0 2px 8px rgba(255,107,53,0.4);}
+    .deal-type-tag{position:absolute;top:12px;right:12px;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);color:white;font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;}
+    .deal-body{padding:16px;flex:1;display:flex;flex-direction:column;}
+    .deal-location{font-size:11px;color:var(--gray);font-weight:600;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;}
+    .deal-name{font-size:18px;font-weight:700;margin-bottom:4px;line-height:1.2;}
+    .deal-stars{color:#FBBF24;font-size:12px;margin-bottom:6px;}
+    .deal-desc{font-size:13px;color:var(--gray);line-height:1.5;margin-bottom:12px;flex:1;}
+    .deal-meta{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--gray);margin-bottom:14px;flex-wrap:wrap;}
+    .deal-footer{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;}
+    .deal-prices{display:flex;flex-direction:column;}
+    .deal-old{font-size:13px;color:#9CA3AF;text-decoration:line-through;}
+    .deal-price{font-size:24px;font-weight:900;color:var(--sun);line-height:1;}
+    .deal-price small{font-size:12px;font-weight:600;color:var(--gray);}
+    .deal-btn{background:linear-gradient(135deg,var(--sun),var(--sun2));color:white;border:none;border-radius:12px;padding:11px 18px;font-size:14px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;white-space:nowrap;box-shadow:0 4px 12px rgba(255,107,53,0.3);}
+    .deal-btn:hover{transform:scale(1.04);}
+
+    .no-deals{text-align:center;padding:60px 24px;color:var(--gray);}
+    .no-deals-icon{font-size:48px;margin-bottom:12px;}
+
+    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px;}
+    .modal-overlay.show{display:flex;}
+    .modal{background:white;border-radius:24px;max-width:520px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.3);animation:modalUp 0.3s ease;}
+    @keyframes modalUp{from{transform:translateY(30px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+    .modal-img{width:100%;height:240px;object-fit:cover;}
+    .modal-body{padding:28px;}
+    .modal-close{position:absolute;top:16px;right:16px;width:36px;height:36px;background:rgba(255,255,255,0.9);border:none;border-radius:50%;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--dark);z-index:10;}
+    .modal-discount{display:inline-block;background:var(--sun);color:white;font-size:14px;font-weight:800;padding:5px 14px;border-radius:20px;margin-bottom:12px;}
+    .modal-title{font-family:'Playfair Display',serif;font-size:28px;font-weight:900;margin-bottom:6px;}
+    .modal-location{font-size:14px;color:var(--gray);margin-bottom:16px;}
+    .modal-desc{font-size:15px;color:#4B5563;line-height:1.7;margin-bottom:20px;}
+    .modal-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
+    .modal-info-item{background:var(--sand);border-radius:12px;padding:12px 16px;}
+    .modal-info-label{font-size:11px;color:var(--gray);font-weight:600;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:2px;}
+    .modal-info-value{font-size:15px;font-weight:700;color:var(--dark);}
+    .modal-price-row{display:flex;align-items:center;justify-content:space-between;background:var(--green-bg);border-radius:14px;padding:16px 20px;margin-bottom:20px;}
+    .modal-price-old{font-size:15px;color:#9CA3AF;text-decoration:line-through;}
+    .modal-price-now{font-size:32px;font-weight:900;color:var(--sun);line-height:1;}
+    .modal-cta{display:block;width:100%;background:linear-gradient(135deg,var(--sun),var(--sun2));color:white;text-align:center;text-decoration:none;border-radius:14px;padding:16px;font-size:16px;font-weight:700;transition:opacity 0.2s;box-shadow:0 6px 16px rgba(255,107,53,0.3);}
+    .modal-cta:hover{opacity:0.9;}
+    .modal-disclaimer{font-size:11px;color:var(--gray);text-align:center;margin-top:10px;line-height:1.5;}
+
+    .newsletter{background:var(--dark);color:white;padding:60px 24px;text-align:center;}
+    .newsletter-inner{max-width:560px;margin:0 auto;}
+    .newsletter h2{font-family:'Playfair Display',serif;font-size:clamp(26px,4vw,38px);font-weight:900;margin-bottom:12px;}
+    .newsletter p{font-size:15px;color:#9CA3AF;margin-bottom:28px;line-height:1.6;}
+    .newsletter-form{display:flex;gap:10px;max-width:420px;margin:0 auto;flex-wrap:wrap;}
+    .newsletter-input{flex:1;min-width:200px;border:none;border-radius:14px;padding:14px 18px;font-size:15px;font-family:'DM Sans',sans-serif;outline:none;}
+    .newsletter-btn{background:var(--sun);color:white;border:none;border-radius:14px;padding:14px 24px;font-size:15px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:opacity 0.2s;}
+    .newsletter-btn:hover{opacity:0.9;}
+
+    .footer{background:#0F0F1A;color:white;padding:48px 24px 28px;}
+    .footer-inner{max-width:1100px;margin:0 auto;}
+    .footer-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px;}
+    .footer-brand p{font-size:14px;color:#9CA3AF;max-width:240px;margin-top:12px;line-height:1.65;}
+    .footer-logo-text{font-family:'Playfair Display',serif;font-size:19px;font-weight:700;color:white;}
+    .footer-logo-text span{color:var(--sun);}
+    .footer-col h4{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#6B7280;margin-bottom:14px;}
+    .footer-col ul{list-style:none;display:flex;flex-direction:column;gap:9px;}
+    .footer-col a{color:#9CA3AF;text-decoration:none;font-size:14px;transition:color 0.2s;cursor:pointer;}
+    .footer-col a:hover{color:white;}
+    .footer-bottom{display:flex;align-items:center;justify-content:space-between;padding-top:24px;border-top:1px solid rgba(255,255,255,0.08);flex-wrap:wrap;gap:12px;}
+    .footer-copy{font-size:13px;color:#6B7280;}
+    .footer-disclaimer{font-size:12px;color:#6B7280;max-width:480px;text-align:right;}
+
+    @media(max-width:768px){
+      .nav-links{display:none;}
+      .hamburger{display:flex;}
+      .nav-links.open{display:flex;flex-direction:column;position:fixed;top:64px;left:0;right:0;background:white;padding:20px 24px;border-bottom:1px solid var(--border);gap:16px;box-shadow:0 8px 24px rgba(0,0,0,0.08);}
+      .nav-links.open li{list-style:none;}
+      .footer-top{grid-template-columns:1fr 1fr;gap:24px;}
+      .footer-brand{grid-column:span 2;}
+      .footer-bottom{flex-direction:column;text-align:center;}
+      .footer-disclaimer{text-align:center;}
+      .filter-group{min-width:120px;}
+    }
+    @media(max-width:480px){
+      .footer-top{grid-template-columns:1fr;}
+      .footer-brand{grid-column:1;}
+      .deals-grid{grid-template-columns:1fr;}
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="/" class="logo">
+      <div class="logo-icon">✈</div>
+      <span class="logo-text">Today<span>Holiday</span></span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#deals">Deals</a></li>
+      <li><a href="#newsletter">Newsletter</a></li>
+      <li><a href="admin.html" class="nav-cta">Admin</a></li>
+    </ul>
+    <div class="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-badge">🔥 Täglich neue Deals</div>
+      <h1>Günstig reisen.<br/><em>Mehr erleben.</em></h1>
+      <p class="hero-sub">Nur die besten Budget-Reisedeals – jeden Morgen handverlesen. Flüge, Hotels und Komplettreisen zum Sparpreis.</p>
+      <div class="hero-stats">
+        <div class="hstat"><div class="hstat-num">täglich</div><div class="hstat-label">Neue Angebote</div></div>
+        <div class="hstat"><div class="hstat-num">60<span>%</span></div><div class="hstat-label">Ø Ersparnis</div></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="filter-bar">
+    <div class="filter-scroll" id="filterScroll"></div>
+  </div>
+
+  <section class="deals-section" id="deals">
+    <div class="deals-head">
+      <div class="deals-title" id="dealsTitle">Alle Deals</div>
+      <div class="deals-right">
+        <span class="deals-count" id="dealsCount"></span>
+        <button class="filter-toggle-btn" onclick="toggleFilterPanel()">⚙️ Filter & Sortieren</button>
+      </div>
+    </div>
+
+    <!-- FILTER PANEL -->
+    <div class="filter-panel" id="filterPanel">
+      <div class="filter-row">
+        <div class="filter-group">
+          <label>Sortieren nach</label>
+          <select id="sortBy">
+            <option value="newest">Neueste zuerst</option>
+            <option value="price-asc">Preis: günstigste zuerst</option>
+            <option value="price-desc">Preis: teuerste zuerst</option>
+            <option value="discount">Höchster Rabatt</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Max. Preis (€)</label>
+          <input type="number" id="maxPrice" placeholder="z.B. 300" min="0"/>
+        </div>
+        <div class="filter-group">
+          <label>Hotel-Sterne</label>
+          <select id="minStars">
+            <option value="0">Egal</option>
+            <option value="2">2+ Sterne</option>
+            <option value="3">3+ Sterne</option>
+            <option value="4">4+ Sterne</option>
+            <option value="5">5 Sterne</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Abflughafen</label>
+          <select id="airport">
+            <option value="">Alle</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Reisemonat</label>
+          <select id="month">
+            <option value="0">Egal</option>
+            <option value="1">Januar</option>
+            <option value="2">Februar</option>
+            <option value="3">März</option>
+            <option value="4">April</option>
+            <option value="5">Mai</option>
+            <option value="6">Juni</option>
+            <option value="7">Juli</option>
+            <option value="8">August</option>
+            <option value="9">September</option>
+            <option value="10">Oktober</option>
+            <option value="11">November</option>
+            <option value="12">Dezember</option>
+          </select>
+        </div>
+        <div class="filter-actions">
+          <button class="filter-apply" onclick="renderDeals()">Anwenden</button>
+          <button class="filter-reset" onclick="resetFilters()">Zurücksetzen</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="deals-grid" id="dealsGrid"></div>
+  </section>
+
+  <section class="newsletter" id="newsletter">
+    <div class="newsletter-inner">
+      <h2>Verpasse keinen Deal 🔔</h2>
+      <p>Trag dich ein und bekomme die besten Budget-Reisedeals direkt in dein Postfach – jeden Morgen frisch.</p>
+      <form class="newsletter-form" onsubmit="handleNewsletter(event)">
+        <input class="newsletter-input" type="email" placeholder="deine@email.de" required/>
+        <button class="newsletter-btn" type="submit">Anmelden</button>
+      </form>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <div class="footer-logo-text">Today<span>Holiday</span></div>
+          <p>Handverlesene Budget-Reisedeals – jeden Tag neu. Günstig reisen für junge Sparfüchse.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Kategorien</h4>
+          <ul id="footerCats"></ul>
+        </div>
+        <div class="footer-col">
+          <h4>Info</h4>
+          <ul>
+            <li><a href="#deals">Aktuelle Deals</a></li>
+            <li><a href="#newsletter">Newsletter</a></li>
+            <li><a href="mailto:info@today-holiday.com">Kontakt</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Rechtliches</h4>
+          <ul>
+            <li><a href="impressum.html">Impressum</a></li>
+            <li><a href="datenschutz.html">Datenschutz</a></li>
+            <li><a href="agb.html">AGB</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-copy">© 2026 Today Holiday</div>
+        <div class="footer-disclaimer">* Today Holiday enthält Affiliate-Links. Bei Buchungen über unsere Links erhalten wir eine Provision – für dich keine Mehrkosten.</div>
+      </div>
+    </div>
+  </footer>
+
+  <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div style="position:relative;">
+        <button class="modal-close" onclick="closeModal()">✕</button>
+        <img class="modal-img" id="modalImg" src="" alt=""/>
+      </div>
+      <div class="modal-body">
+        <span class="modal-discount" id="modalDiscount">-50%</span>
+        <h2 class="modal-title" id="modalTitle"></h2>
+        <div class="modal-location" id="modalLocation"></div>
+        <p class="modal-desc" id="modalDesc"></p>
+        <div class="modal-info-grid">
+          <div class="modal-info-item">
+            <div class="modal-info-label">📅 Reisezeitraum</div>
+            <div class="modal-info-value" id="modalDates"></div>
+          </div>
+          <div class="modal-info-item">
+            <div class="modal-info-label">✈️ Enthalten</div>
+            <div class="modal-info-value" id="modalIncludes"></div>
+          </div>
+        </div>
+        <div class="modal-price-row">
+          <div>
+            <div class="modal-price-old" id="modalOldPrice"></div>
+            <div class="modal-price-now" id="modalNowPrice"></div>
+          </div>
+          <div style="text-align:right;font-size:13px;color:var(--green);font-weight:700;white-space:pre-line;" id="modalSavings"></div>
+        </div>
+        <a class="modal-cta" id="modalCta" href="#" target="_blank" rel="noopener">Zum Angebot →</a>
+        <div class="modal-disclaimer">Du wirst zum Partner-Anbieter weitergeleitet. Preise können sich ändern. Keine Mehrkosten für dich.</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ══════════════════════════════════════════════════════════════
+    // KATEGORIEN (Reiseziele & Themen)
+    // ══════════════════════════════════════════════════════════════
+    const CATEGORIES = [
+      { id: 'all',        label: '🌍 Alle Deals' },
+      { id: 'youngbroke', label: '💸 Young & Broke' },
+      { id: 'wochenende', label: '🍻 Freitag → Sonntag' },
+      { id: 'europa',     label: '🇪🇺 Europa' },
+      { id: 'fernreisen', label: '🌏 Fernreisen' },
+      { id: 'asien',      label: '🏯 Asien' },
+      { id: 'usa',        label: '🗽 USA' },
+      { id: 'suedamerika',label: '🌴 Südamerika' },
+      { id: 'strand',     label: '🏖 Strand' },
+      { id: 'staedte',    label: '🏙 Städtetrip' },
+      { id: 'wandern',    label: '🥾 Wandern' },
+      { id: 'oesterreich',label: '🇦🇹 Österreich' },
+      { id: 'schweiz',    label: '🇨🇭 Schweiz' },
+      // Typ-Filter:
+      { id: 'nurfluege',  label: '✈️ Nur Flüge',  type: 'flug' },
+      { id: 'nurhotels',  label: '🏨 Nur Hotels',  type: 'hotel' },
+      { id: 'nurairbnb',  label: '🏠 Nur Airbnbs', type: 'airbnb' },
+    ];
+
+    // ══════════════════════════════════════════════════════════════
+    // DEALS – HIER trägst du Deals ein (Admin kommt in Schritt 3)
+    //
+    //  category : Reiseziel/Thema (europa, asien, usa, youngbroke, ...)
+    //  type     : flug | hotel | airbnb | komplett
+    //  stars    : Hotel-Sterne (0 wenn kein Hotel)
+    //  airport  : Abflughafen-Code (FRA, MUC, ...) oder '' wenn egal
+    //  oldPrice : alter Preis  |  price : aktueller Preis
+    //  Ersparnis % wird automatisch berechnet!
+    // ══════════════════════════════════════════════════════════════
+    // ══════════════════════════════════════════════════════════════
+    // SUPABASE – deine 2 Schlüssel hier eintragen!
+    // (aus Supabase → Project Settings → API Keys)
+    // ══════════════════════════════════════════════════════════════
+    const SUPABASE_URL = "HIER_DEINE_PROJECT_URL";       // z.B. https://abcdefg.supabase.co
+    const SUPABASE_ANON_KEY = "HIER_DEIN_ANON_KEY";       // der lange "anon public" Schlüssel
+
+    let DEALS = []; // wird aus Supabase geladen
+
+    const _sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    async function loadDeals(){
+      try {
+        const { data, error } = await _sb
+          .from('deals')
+          .select('*')
+          .order('created_at', { ascending: false });
+        if(error){ console.error('Supabase:', error); return; }
+        // Felder von DB-Format auf Webseiten-Format mappen
+        DEALS = (data || []).map(d => ({
+          category: d.category, type: d.type, stars: d.stars, airport: d.airport,
+          month: d.month, title: d.title, location: d.location, image: d.image,
+          oldPrice: d.old_price, price: d.price, dates: d.dates,
+          includes: d.includes, description: d.description, link: d.link
+        }));
+      } catch(e){ console.error(e); }
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    // LOGIK – ab hier nichts ändern
+    // ══════════════════════════════════════════════════════════════
+    let activeCategory = 'all';
+
+    function toggleMenu(){ document.getElementById('navLinks').classList.toggle('open'); }
+    function toggleFilterPanel(){ document.getElementById('filterPanel').classList.toggle('show'); }
+
+    function catLabel(id){
+      const c = CATEGORIES.find(c => c.id === id);
+      return c ? c.label : id;
+    }
+    function catTypeLabel(type){
+      const map = {flug:'✈️ Flug', hotel:'🏨 Hotel', airbnb:'🏠 Airbnb', komplett:'📦 Komplettreise'};
+      return map[type] || type;
+    }
+
+    function getCategoryDeals(catId){
+      const cat = CATEGORIES.find(c => c.id === catId);
+      if(catId === 'all') return DEALS.slice();
+      if(cat && cat.type) return DEALS.filter(d => d.type === cat.type); // Typ-Kategorie
+      return DEALS.filter(d => d.category === catId);
+    }
+
+    function renderFilters(){
+      const scroll = document.getElementById('filterScroll');
+      scroll.innerHTML = '';
+      CATEGORIES.forEach(cat => {
+        const count = getCategoryDeals(cat.id).length;
+        if(cat.id !== 'all' && count === 0) return;
+        const chip = document.createElement('button');
+        chip.className = 'filter-chip' + (cat.id === activeCategory ? ' active' : '');
+        chip.textContent = cat.label;
+        chip.onclick = () => { activeCategory = cat.id; renderFilters(); renderDeals(); };
+        scroll.appendChild(chip);
+      });
+
+      // Footer Kategorien (nur Reiseziele, keine Typ-Filter)
+      const fc = document.getElementById('footerCats');
+      if(fc){
+        fc.innerHTML = '';
+        CATEGORIES.filter(c => c.id !== 'all' && !c.type).forEach(cat => {
+          if(getCategoryDeals(cat.id).length === 0) return;
+          const li = document.createElement('li');
+          const a = document.createElement('a');
+          a.textContent = cat.label;
+          a.onclick = () => { activeCategory = cat.id; renderFilters(); renderDeals(); document.getElementById('deals').scrollIntoView({behavior:'smooth'}); };
+          li.appendChild(a);
+          fc.appendChild(li);
+        });
+      }
+
+      // Abflughafen-Dropdown füllen
+      const airportSel = document.getElementById('airport');
+      const airports = [...new Set(DEALS.map(d => d.airport).filter(a => a))].sort();
+      airportSel.innerHTML = '<option value="">Alle</option>' + airports.map(a => `<option value="${a}">${a}</option>`).join('');
+    }
+
+    function renderDeals(){
+      const grid = document.getElementById('dealsGrid');
+      let list = getCategoryDeals(activeCategory);
+
+      // Filter anwenden
+      const maxPrice = parseInt(document.getElementById('maxPrice').value) || 0;
+      const minStars = parseInt(document.getElementById('minStars').value) || 0;
+      const airport = document.getElementById('airport').value;
+      const sortBy = document.getElementById('sortBy').value;
+
+      const month = parseInt(document.getElementById('month').value) || 0;
+      if(maxPrice > 0) list = list.filter(d => d.price <= maxPrice);
+      if(minStars > 0) list = list.filter(d => (d.stars || 0) >= minStars);
+      if(airport) list = list.filter(d => d.airport === airport);
+      // Monat 0 = flexibel (zeigt immer); sonst nach gewähltem Monat filtern
+      if(month > 0) list = list.filter(d => d.month === 0 || d.month === month);
+
+      // Sortieren
+      const disc = d => d.oldPrice > 0 ? (1 - d.price/d.oldPrice) : 0;
+      if(sortBy === 'price-asc') list.sort((a,b) => a.price - b.price);
+      else if(sortBy === 'price-desc') list.sort((a,b) => b.price - a.price);
+      else if(sortBy === 'discount') list.sort((a,b) => disc(b) - disc(a));
+      // 'newest' = Reihenfolge im Array (neueste oben eintragen)
+
+      document.getElementById('dealsTitle').textContent = catLabel(activeCategory);
+      document.getElementById('dealsCount').textContent = list.length + ' Angebot' + (list.length !== 1 ? 'e' : '');
+
+      grid.innerHTML = '';
+      if(list.length === 0){
+        grid.innerHTML = '<div class="no-deals" style="grid-column:1/-1;"><div class="no-deals-icon">🧳</div><div>Keine Deals gefunden.<br/>Andere Filter probieren oder morgen wieder vorbeischauen!</div></div>';
+        return;
+      }
+
+      list.forEach(deal => {
+        const discount = deal.oldPrice > 0 ? Math.round((1 - deal.price/deal.oldPrice) * 100) : 0;
+        const stars = (deal.stars > 0) ? '★'.repeat(deal.stars) : '';
+        const card = document.createElement('div');
+        card.className = 'deal-card';
+        card.onclick = () => openModal(deal);
+        card.innerHTML =
+          '<div class="deal-img-wrap">' +
+            '<img class="deal-img" src="' + deal.image + '" alt="' + deal.title + '" loading="lazy"/>' +
+            (discount > 0 ? '<div class="deal-discount">-' + discount + '%</div>' : '') +
+            '<div class="deal-type-tag">' + catTypeLabel(deal.type) + '</div>' +
+          '</div>' +
+          '<div class="deal-body">' +
+            '<div class="deal-location">📍 ' + deal.location + '</div>' +
+            '<div class="deal-name">' + deal.title + '</div>' +
+            (stars ? '<div class="deal-stars">' + stars + '</div>' : '') +
+            '<div class="deal-desc">' + deal.description + '</div>' +
+            '<div class="deal-meta"><span>📅 ' + deal.dates + '</span>' + (deal.airport ? '<span>✈️ ab ' + deal.airport + '</span>' : '') + '</div>' +
+            '<div class="deal-footer">' +
+              '<div class="deal-prices">' +
+                (deal.oldPrice > 0 ? '<span class="deal-old">' + deal.oldPrice + ' €</span>' : '') +
+                '<span class="deal-price">' + deal.price + ' €<small> /Person</small></span>' +
+              '</div>' +
+              '<button class="deal-btn">Angebot ansehen</button>' +
+            '</div>' +
+          '</div>';
+        grid.appendChild(card);
+      });
+    }
+
+    function resetFilters(){
+      document.getElementById('maxPrice').value = '';
+      document.getElementById('minStars').value = '0';
+      document.getElementById('airport').value = '';
+      document.getElementById('month').value = '0';
+      document.getElementById('sortBy').value = 'newest';
+      renderDeals();
+    }
+
+    function openModal(deal){
+      const discount = deal.oldPrice > 0 ? Math.round((1 - deal.price/deal.oldPrice) * 100) : 0;
+      const saved = deal.oldPrice > 0 ? deal.oldPrice - deal.price : 0;
+      document.getElementById('modalImg').src = deal.image;
+      document.getElementById('modalDiscount').textContent = discount > 0 ? '-' + discount + '% sparen' : 'Top Deal';
+      document.getElementById('modalTitle').textContent = deal.title;
+      document.getElementById('modalLocation').textContent = '📍 ' + deal.location + (deal.stars > 0 ? ' · ' + '★'.repeat(deal.stars) : '');
+      document.getElementById('modalDesc').textContent = deal.description;
+      document.getElementById('modalDates').textContent = deal.dates;
+      document.getElementById('modalIncludes').textContent = deal.includes;
+      document.getElementById('modalOldPrice').textContent = deal.oldPrice > 0 ? deal.oldPrice + ' €' : '';
+      document.getElementById('modalNowPrice').textContent = deal.price + ' €';
+      document.getElementById('modalSavings').textContent = saved > 0 ? 'Du sparst\n' + saved + ' €' : '';
+      document.getElementById('modalCta').href = deal.link;
+      document.getElementById('modalOverlay').classList.add('show');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal(){
+      document.getElementById('modalOverlay').classList.remove('show');
+      document.body.style.overflow = '';
+    }
+
+    function handleNewsletter(e){
+      e.preventDefault();
+      const input = e.target.querySelector('input');
+      alert('Danke! 🎉 Sobald der Newsletter startet, bist du dabei: ' + input.value);
+      input.value = '';
+    }
+
+    document.addEventListener('keydown', e => { if(e.key === 'Escape') closeModal(); });
+
+    // Beim Laden: Deals aus Supabase holen, dann anzeigen
+    (async function init(){
+      await loadDeals();
+      renderFilters();
+      renderDeals();
+    })();
+  </script>
+</body>
+</html>
